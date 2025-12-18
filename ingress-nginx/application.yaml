@@ -18,6 +18,9 @@ spec:
         controller:
           service:
             type: LoadBalancer
+          ingressClassResource:
+            name: nginx
+          ingressClassByName: true
 
   destination:
     namespace: ingress-nginx
