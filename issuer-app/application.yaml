@@ -9,10 +9,11 @@ spec:
   project: default
   source:
     repoURL: https://github.com/denismironiuk/test-nginx.git
-    path: cert-manager/issuer-app
+    path: cert-manager
     targetRevision: main
+    
     directory:
-      recurse: true
+      recurse: false
 
   destination:
     server: https://kubernetes.default.svc
