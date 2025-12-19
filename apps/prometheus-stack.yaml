@@ -17,8 +17,92 @@ spec:
     targetRevision: 80.4.2
     helm:
       releaseName: kube-prometheus-stack
-      valueFiles:
-        - prometheus-values.yaml
+      values: |-
+        grafana:
+          enabled: true
+          adminPassword: "admin"
+          service:
+            type: ClusterIP
+
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            annotations:
+              cert-manager.io/cluster-issuer: "letsencrypt-prod"
+              nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            hosts:
+              - grafana.jenkinsdevops.org
+            tls:
+              - secretName: grafana-tls
+                hosts:
+                  - grafana.jenkinsdevops.org
+
+          persistence:
+            enabled: true
+            storageClassName: gp3
+            size: 2Gi
+            accessModes: ["ReadWriteOnce"]
+
+        prometheus:
+          prometheusSpec:
+            replicas: 1
+            retention: 5d
+            resources:
+              requests:
+                cpu: 200m
+                memory: 512Mi
+              limits:
+                cpu: 1000m
+                memory: 2Gi
+
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: gp3
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 10Gi
+
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            annotations:
+              cert-manager.io/cluster-issuer: "letsencrypt-prod"
+              nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            hosts:
+              - prometheus.jenkinsdevops.org
+            tls:
+              - secretName: prometheus-tls
+                hosts:
+                  - prometheus.jenkinsdevops.org
+
+        alertmanager:
+          alertmanagerSpec:
+            replicas: 1
+            storage:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: gp3
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 2Gi
+
+        kube-state-metrics:
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+
+        nodeExporter:
+          resources:
+            requests:
+              cpu: 20m
+              memory: 32Mi
+
+        global:
+          storageClass: gp3
 
   destination:
     server: https://kubernetes.default.svc
