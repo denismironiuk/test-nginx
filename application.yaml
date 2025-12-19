@@ -8,11 +8,11 @@ spec:
 
   source:
     repoURL: https://github.com/denismironiuk/test-nginx.git
-    path: .
+    path: apps
     targetRevision: main
     directory:
       recurse: true
-      exclude: '{issuer/**,cert-manager/**,ingress-nginx/**}'
+     
 
   destination:
     server: https://kubernetes.default.svc
