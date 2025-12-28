@@ -1,6 +1,7 @@
 grafana:
   enabled: true
   adminPassword: "admin"
+
   service:
     type: ClusterIP
 
@@ -10,6 +11,7 @@ grafana:
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      external-dns.alpha.kubernetes.io/hostname: grafana.jenkinsdevops.org
     hosts:
       - grafana.jenkinsdevops.org
     tls:
@@ -21,7 +23,9 @@ grafana:
     enabled: true
     storageClassName: gp3
     size: 2Gi
-    accessModes: ["ReadWriteOnce"]
+    accessModes:
+      - ReadWriteOnce
+
 
 prometheus:
   prometheusSpec:
@@ -39,7 +43,8 @@ prometheus:
       volumeClaimTemplate:
         spec:
           storageClassName: gp3
-          accessModes: ["ReadWriteOnce"]
+          accessModes:
+            - ReadWriteOnce
           resources:
             requests:
               storage: 10Gi
@@ -50,12 +55,14 @@ prometheus:
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      external-dns.alpha.kubernetes.io/hostname: prometheus.jenkinsdevops.org
     hosts:
       - prometheus.jenkinsdevops.org
     tls:
       - secretName: prometheus-tls
         hosts:
           - prometheus.jenkinsdevops.org
+
 
 alertmanager:
   alertmanagerSpec:
@@ -64,10 +71,12 @@ alertmanager:
       volumeClaimTemplate:
         spec:
           storageClassName: gp3
-          accessModes: ["ReadWriteOnce"]
+          accessModes:
+            - ReadWriteOnce
           resources:
             requests:
               storage: 2Gi
+
 
 kube-state-metrics:
   resources:
@@ -75,11 +84,13 @@ kube-state-metrics:
       cpu: 10m
       memory: 64Mi
 
+
 nodeExporter:
   resources:
     requests:
       cpu: 20m
       memory: 32Mi
+
 
 global:
   storageClass: gp3
