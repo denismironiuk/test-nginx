@@ -10,7 +10,7 @@ spec:
 
   source:
     repoURL: https://github.com/denismironiuk/helmchart-gitops
-    targetRevision: dev
+    targetRevision: main
     path: dev/client
     helm:
       valueFiles:
